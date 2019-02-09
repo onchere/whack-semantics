@@ -21,13 +21,9 @@ imports WHACK-SYNTAX
 
 syntax KResult ::= Float
 
-//@ Unary Operations for Floating Point Numbers
-
 rule +F:Float => 0.0 +Float F
 
 rule -F:Float => 0.0 -Float F
-
-//@ Binary Operations for Floating Point Numbers
 
 rule F1:Float * F2:Float => F1 *Float F2
 
@@ -39,9 +35,7 @@ rule F1:Float + F2:Float => F1 +Float F2
 
 rule F1:Float - F2:Float => F1 -Float F2
 
-rule F1:Float ^ F2:Float => F2 ^Float F2
-
-//@ Comparisons for Floating Point Numbers
+rule F1:Float ^ F2:Float => F1 ^Float F2
 
 rule F1:Float <= F2:Float => F1 <=Float F2
 

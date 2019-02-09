@@ -13,38 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require "../expression/matchexpr.k"
+require "../expression/factor/matchexpr.k"
 
 module WHACK-STMT-MATCH
 
-imports WHACK-EXPRESSION-MATCHEXPR
+imports WHACK-FACTOR-MATCHEXPR
 
 rule match E:Expression {
-		(Options: Result) _
-		default: _
-	 }
-	=> Result requires inExprList(Options, E)
+  		(Options: Result) _
+  		default: _
+  	 }
+  	=> Result requires inExprList(Options, E)
 
 rule match E:Expression {
-		_ Cases
-		default: Default
-	 }
-	=> match E { Cases default: Default } [owise]
+  		_ Cases
+  		default: Default
+  	 }
+  	=> match E { Cases default: Default } [owise]
 
 rule match E:Expression {
-		.MatchCases
-		default: Default
-	} => Default
+  		.MatchCases
+  		default: Default
+  	 }
+  	=> Default
 
 rule match E:Expression {
-		(Options: Result) _
-	 }
-	=> Result requires inExprList(Options, E)
+  		(Options: Result) _
+  	 }
+  	=> Result requires inExprList(Options, E)
 
 rule match E:Expression {
-		_ Cases
-	 }
-	=> match E { Cases } [owise]
+  		_ Cases
+  	 }
+  	=> match E { Cases } [owise]
 
 rule match _ { .MatchCases } => . [structural]
 

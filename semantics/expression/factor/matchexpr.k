@@ -21,7 +21,7 @@ imports WHACK-SYNTAX
 
 syntax Bool ::= inExprList(ExprList, Expression) [function]
 
-rule inExprList((Head, Tail:List), Val) =>
+rule inExprList((Head, Tail:ExprList), Val) =>
 	Head ==K Val orBool inExprList(Tail, Val)
 
 rule inExprList(.ExprList, _) => false
@@ -41,6 +41,7 @@ rule match E:Expression {
 rule match E:Expression {
 		.MatchExprCases
 		default: Default
-	} => Default
+	 }
+	=> Default
 
 endmodule

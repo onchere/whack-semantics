@@ -1,10 +1,9 @@
 \nonstopmode
 \PassOptionsToPackage{pdftex,usenames,dvipsnames,svgnames,x11names}{xcolor}
 \PassOptionsToPackage{pdftex}{hyperref}
-\documentclass[12pt, english, pdftex,twoside,a4paper]{article}
-\usepackage[poster,style=bubble,inner=2.5cm,outer=3.8cm,bindingoffset=.5cm,paper=a4paper]{k}
-\usepackage[inner=2.5cm,outer=3.8cm]{geometry}
-
+\documentclass{article}
+\usepackage[poster,style=bubble]{k}
+\title{WHACK}
 \begin{document}
 \begin{kdefinition}
 \maketitle
@@ -14,6 +13,12 @@
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{Integral}}}\syntax{{\nonTerminal{\sort{Int}}}}{}
+\end{syntaxBlock}
+
+\begin{syntaxBlock}{\nonTerminal{\sort{Binary}}}\syntax{Token\{"0b[01]+"\}}{}
+\end{syntaxBlock}
+
+\begin{syntaxBlock}{\nonTerminal{\sort{Hexadecimal}}}\syntax{Token\{"0[xX][0-9a-fA-F]+"\}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{FloatingPt}}}\syntax{{\nonTerminal{\sort{Float}}}}{}
@@ -79,10 +84,13 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{ExpandOp}}}\syntax{{{\nonTerminal{\sort{Variable}}}}\mathrel{}{{\nonTerminal{\sort{Expansion}}}}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{SizeOf}}}\syntax{{}\terminal{sizeof}{{\nonTerminal{\sort{Expression}}}}}{}\syntaxCont{{}\terminal{sizeof}{{\nonTerminal{\sort{Type}}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{SizeOf}}}\syntax{{}\terminal{sizeof}({{\nonTerminal{\sort{Type}}}})}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{AlignOf}}}\syntax{{}\terminal{alignof}{{\nonTerminal{\sort{Type}}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{AlignOf}}}\syntax{{}\terminal{alignof}({{\nonTerminal{\sort{Type}}}})}{}
+\end{syntaxBlock}
+
+\begin{syntaxBlock}{\nonTerminal{\sort{OffsetOf}}}\syntax{{}\terminal{offsetof}({{\nonTerminal{\sort{Type}}}},{{\nonTerminal{\sort{Expression}}}})}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{Cast}}}\syntax{{}\terminal{cast}{{\nonTerminal{\sort{Expression}}}}\terminal{as}{{\nonTerminal{\sort{Type}}}}}{}
@@ -100,12 +108,6 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{ForInExpr}}}\syntax{{}\terminal{for}{{\nonTerminal{\sort{IdentList}}}}\terminal{in}{{\nonTerminal{\sort{Range}}}}\terminal{if}{{\nonTerminal{\sort{LogicalOr}}}}}{}\syntaxCont{{}\terminal{for}{{\nonTerminal{\sort{IdentList}}}}\terminal{in}{{\nonTerminal{\sort{Range}}}}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{ForInExprList}}}\syntax{List\{{\nonTerminal{\sort{ForInExpr}}}, \mbox{``}\mbox{''}\}}{}
-\end{syntaxBlock}
-
-\begin{syntaxBlock}{\nonTerminal{\sort{ListComprehension}}}\syntax{\{{{\nonTerminal{\sort{IdentList}}}}\mathrel{}{{\nonTerminal{\sort{ForInExprList}}}}\}}{}
-\end{syntaxBlock}
-
 \begin{syntaxBlock}{\nonTerminal{\sort{MemberInitListMember}}}\syntax{{{\nonTerminal{\sort{Ident}}}}\terminal{:}{{\nonTerminal{\sort{Expression}}}}}{}
 \end{syntaxBlock}
 
@@ -115,16 +117,13 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{MemberInitList}}}\syntax{\{{{\nonTerminal{\sort{MemberInitListMemberList}}}}\}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{Initializer}}}\syntax{{\nonTerminal{\sort{MemberInitList}}}}{}\syntaxCont{{\nonTerminal{\sort{ListComprehension}}}}{}\syntaxCont{{\nonTerminal{\sort{InitList}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{Initializer}}}\syntax{{\nonTerminal{\sort{MemberInitList}}}}{}\syntaxCont{{\nonTerminal{\sort{InitList}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{Value}}}\syntax{{{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{Initializer}}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{NewExpr}}}\syntax{{}\terminal{new}({{\nonTerminal{\sort{Expression}}}}){{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{Initializer}}}}}{}\syntaxCont{{}\terminal{new}({{\nonTerminal{\sort{Expression}}}}){{\nonTerminal{\sort{Type}}}}}{}\syntaxCont{{}\terminal{new}{{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{Initializer}}}}}{}\syntaxCont{{}\terminal{new}{{\nonTerminal{\sort{Type}}}}}{}
-\end{syntaxBlock}
-
-\begin{syntaxBlock}{\nonTerminal{\sort{Callable}}}\syntax{{\nonTerminal{\sort{Closure}}}}{}\syntaxCont{{\nonTerminal{\sort{OverloadID}}}}{}\syntaxCont{{\nonTerminal{\sort{ScopeRes}}}}{}\syntaxCont{{\nonTerminal{\sort{Variable}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{Future}}}\syntax{{}\terminal{await}}{}\syntaxCont{{}\terminal{async}}{}
@@ -136,7 +135,7 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{FuncArgsList}}}\syntax{List\{{\nonTerminal{\sort{FuncArgs}}}, \mbox{``}\mbox{''}\}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{Callables}}}\syntax{List\{{\nonTerminal{\sort{Callable}}}, \mbox{``}->\mbox{''}\}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{Callables}}}\syntax{List\{{\nonTerminal{\sort{Factor}}}, \mbox{``}->\mbox{''}\}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{FuncCall}}}\syntax{{{\nonTerminal{\sort{Future}}}}\mathrel{}{{\nonTerminal{\sort{Callables}}}}\mathrel{}{{\nonTerminal{\sort{FuncArgsList}}}}}{}\syntaxCont{{{\nonTerminal{\sort{Callables}}}}\mathrel{}{{\nonTerminal{\sort{FuncArgsList}}}}}{}
@@ -169,7 +168,7 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{Closure}}}\syntax{{}\terminal{func}{{\nonTerminal{\sort{Capture}}}}({{\nonTerminal{\sort{Args}}}}){{\nonTerminal{\sort{ListOfTypes}}}}\mathrel{}{{\nonTerminal{\sort{Body}}}}}{}\syntaxCont{{}\terminal{func}({{\nonTerminal{\sort{Args}}}}){{\nonTerminal{\sort{ListOfTypes}}}}\mathrel{}{{\nonTerminal{\sort{Body}}}}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{Factor}}}\syntax{({{\nonTerminal{\sort{Expression}}}})}{\kattribute{bracket}}\syntaxCont{{}\terminal{*}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{!}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{\mbox{\~{}}}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{+}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{-}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{\nonTerminal{\sort{Closure}}}}{}\syntaxCont{{\nonTerminal{\sort{Reference}}}}{}\syntaxCont{{\nonTerminal{\sort{Initializer}}}}{}\syntaxCont{{\nonTerminal{\sort{NewExpr}}}}{}\syntaxCont{{\nonTerminal{\sort{Value}}}}{}\syntaxCont{{\nonTerminal{\sort{PreOp}}}}{}\syntaxCont{{\nonTerminal{\sort{PostOp}}}}{}\syntaxCont{{\nonTerminal{\sort{Expansion}}}}{}\syntaxCont{{\nonTerminal{\sort{ExpandOp}}}}{}\syntaxCont{{\nonTerminal{\sort{SizeOf}}}}{}\syntaxCont{{\nonTerminal{\sort{AlignOf}}}}{}\syntaxCont{{\nonTerminal{\sort{Cast}}}}{}\syntaxCont{{\nonTerminal{\sort{Variable}}}}{}\syntaxCont{{\nonTerminal{\sort{Character}}}}{}\syntaxCont{{\nonTerminal{\sort{FloatingPt}}}}{}\syntaxCont{{\nonTerminal{\sort{Integral}}}}{}\syntaxCont{{\nonTerminal{\sort{Boolean}}}}{}\syntaxCont{{\nonTerminal{\sort{String}}}}{}\syntaxCont{{\nonTerminal{\sort{Identifier}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{Factor}}}\syntax{({{\nonTerminal{\sort{Expression}}}})}{\kattribute{bracket}}\syntaxCont{{}\terminal{*}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{!}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{\mbox{\~{}}}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{+}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{}\terminal{-}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{\nonTerminal{\sort{MatchExpr}}}}{}\syntaxCont{{\nonTerminal{\sort{Closure}}}}{}\syntaxCont{{\nonTerminal{\sort{Reference}}}}{}\syntaxCont{{\nonTerminal{\sort{Initializer}}}}{}\syntaxCont{{\nonTerminal{\sort{NewExpr}}}}{}\syntaxCont{{\nonTerminal{\sort{Value}}}}{}\syntaxCont{{\nonTerminal{\sort{PreOp}}}}{}\syntaxCont{{\nonTerminal{\sort{PostOp}}}}{}\syntaxCont{{\nonTerminal{\sort{Expansion}}}}{}\syntaxCont{{\nonTerminal{\sort{ExpandOp}}}}{}\syntaxCont{{\nonTerminal{\sort{SizeOf}}}}{}\syntaxCont{{\nonTerminal{\sort{AlignOf}}}}{}\syntaxCont{{\nonTerminal{\sort{Cast}}}}{}\syntaxCont{{\nonTerminal{\sort{Character}}}}{}\syntaxCont{{\nonTerminal{\sort{FloatingPt}}}}{}\syntaxCont{{\nonTerminal{\sort{Integral}}}}{}\syntaxCont{{\nonTerminal{\sort{Binary}}}}{}\syntaxCont{{\nonTerminal{\sort{Hexadecimal}}}}{}\syntaxCont{{\nonTerminal{\sort{Boolean}}}}{}\syntaxCont{{\nonTerminal{\sort{String}}}}{}\syntaxCont{{\nonTerminal{\sort{Element}}}}{}\syntaxCont{{\nonTerminal{\sort{StructMember}}}}{}\syntaxCont{{\nonTerminal{\sort{Identifier}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{Multiplicative}}}\syntax{{{\nonTerminal{\sort{Multiplicative}}}}\terminal{/}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{{\nonTerminal{\sort{Multiplicative}}}}\terminal{*}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{{\nonTerminal{\sort{Multiplicative}}}}\terminal{\%}{{\nonTerminal{\sort{Factor}}}}}{\kattribute{strict}}\syntaxCont{{\nonTerminal{\sort{Factor}}}}{}
@@ -220,7 +219,7 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{MatchExpr}}}\syntax{{}\terminal{match}{{\nonTerminal{\sort{Expression}}}}\{{{\nonTerminal{\sort{MatchExprCases}}}}\terminal{default}{}\terminal{:}{{\nonTerminal{\sort{Expression}}}}\}}{\kattribute{strict}(1)}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{Expression}}}\syntax{{\nonTerminal{\sort{MatchExpr}}}}{}\syntaxCont{{\nonTerminal{\sort{AddressOf}}}}{}\syntaxCont{{\nonTerminal{\sort{Ternary}}}}{}\syntaxCont{{\nonTerminal{\sort{LogicalOr}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{Expression}}}\syntax{{\nonTerminal{\sort{AddressOf}}}}{}\syntaxCont{{\nonTerminal{\sort{Ternary}}}}{}\syntaxCont{{\nonTerminal{\sort{LogicalOr}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{MatchCase}}}\syntax{{{\nonTerminal{\sort{ExprList}}}}\terminal{:}{{\nonTerminal{\sort{Stmt}}}}}{}
@@ -271,7 +270,7 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{StmtsList}}}\syntax{List\{{\nonTerminal{\sort{Stmt}}}, \mbox{``};\mbox{''}\}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{ForInIncrExpr}}}\syntax{{}\terminal{for}{{\nonTerminal{\sort{StmtsList}}}}\mathrel{}{{\nonTerminal{\sort{LogicalOr}}}}\terminal{;}{{\nonTerminal{\sort{StmtsList}}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{ForInIncrExpr}}}\syntax{{}\terminal{for}{{\nonTerminal{\sort{StmtsList}}}}\mathrel{}{{\nonTerminal{\sort{LogicalOr}}}}\terminal{;}{{\nonTerminal{\sort{StmtsList}}}}}{}\syntaxCont{{}\terminal{for}{}\terminal{;}{{\nonTerminal{\sort{LogicalOr}}}}\terminal{;}{{\nonTerminal{\sort{StmtsList}}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{ForExpr}}}\syntax{{\nonTerminal{\sort{ForInExpr}}}}{}\syntaxCont{{\nonTerminal{\sort{ForInIncrExpr}}}}{}
@@ -280,7 +279,13 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{For}}}\syntax{{{\nonTerminal{\sort{ForExpr}}}}\mathrel{}{{\nonTerminal{\sort{Stmt}}}}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{Variable}}}\syntax{{\nonTerminal{\sort{Ident}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{StructMember}}}\syntax{{{\nonTerminal{\sort{Variable}}}}\terminal{.}{{\nonTerminal{\sort{Ident}}}}}{}
+\end{syntaxBlock}
+
+\begin{syntaxBlock}{\nonTerminal{\sort{Element}}}\syntax{{{\nonTerminal{\sort{Variable}}}}[{{\nonTerminal{\sort{Expression}}}}]}{}
+\end{syntaxBlock}
+
+\begin{syntaxBlock}{\nonTerminal{\sort{Variable}}}\syntax{{\nonTerminal{\sort{Element}}}}{}\syntaxCont{{\nonTerminal{\sort{StructMember}}}}{}\syntaxCont{{\nonTerminal{\sort{Ident}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{PostOp}}}\syntax{{{\nonTerminal{\sort{Variable}}}}\terminal{--}}{}\syntaxCont{{{\nonTerminal{\sort{Variable}}}}\terminal{++}}{}
@@ -310,10 +315,10 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{Defer}}}\syntax{{}\terminal{defer}{{\nonTerminal{\sort{Stmt}}}}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{VariableList}}}\syntax{List\{{\nonTerminal{\sort{Variable}}}, \mbox{``},\mbox{''}\}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{FactorList}}}\syntax{List\{{\nonTerminal{\sort{Factor}}}, \mbox{``},\mbox{''}\}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{Assign}}}\syntax{{{\nonTerminal{\sort{VariableList}}}}\terminal{=}{{\nonTerminal{\sort{ExprList}}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{Assign}}}\syntax{{{\nonTerminal{\sort{FactorList}}}}\terminal{=}{{\nonTerminal{\sort{ExprList}}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{Alias}}}\syntax{{}\terminal{using}{{\nonTerminal{\sort{IdentList}}}}\terminal{=}{{\nonTerminal{\sort{ListOfTypes}}}}}{}
@@ -367,7 +372,7 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{StructDef}}}\syntax{{}\terminal{struct}{{\nonTerminal{\sort{Tags}}}}\{{{\nonTerminal{\sort{StructDefMemberList}}}}\}}{}\syntaxCont{{}\terminal{struct}\{{{\nonTerminal{\sort{StructDefMemberList}}}}\}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{Structure}}}\syntax{{{\nonTerminal{\sort{Tags}}}}\mathrel{}{{\nonTerminal{\sort{Ident}}}}\mathrel{}{{\nonTerminal{\sort{StructDef}}}}}{}\syntaxCont{{{\nonTerminal{\sort{Ident}}}}\mathrel{}{{\nonTerminal{\sort{StructDef}}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{Structure}}}\syntax{{{\nonTerminal{\sort{Ident}}}}\mathrel{}{{\nonTerminal{\sort{StructDef}}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{OverloadableOps}}}\syntax{{}\terminal{<<=}}{}\syntaxCont{{}\terminal{>>=}}{}\syntaxCont{{}\terminal{\&\&}}{}\syntaxCont{{}\terminal{||}}{}\syntaxCont{{}\terminal{<<}}{}\syntaxCont{{}\terminal{>>}}{}\syntaxCont{{}\terminal{>=}}{}\syntaxCont{{}\terminal{<}}{}\syntaxCont{{}\terminal{>}}{}\syntaxCont{{}\terminal{!=}}{}\syntaxCont{{}\terminal{==}}{}\syntaxCont{{}\terminal{-=}}{}\syntaxCont{{}\terminal{+=}}{}\syntaxCont{{}\terminal{|=}}{}\syntaxCont{{}\terminal{/=}}{}\syntaxCont{{}\terminal{\%=}}{}\syntaxCont{{}\terminal{\&=}}{}\syntaxCont{{}\terminal{\mbox{\^{}}=}}{}\syntaxCont{{}\terminal{*=}}{}\syntaxCont{{}\terminal{|}}{}\syntaxCont{{}\terminal{!}}{}\syntaxCont{{}\terminal{\mbox{\~{}}}}{}\syntaxCont{{}\terminal{=}}{}\syntaxCont{{}\terminal{/}}{}\syntaxCont{{}\terminal{*}}{}\syntaxCont{{}\terminal{--}}{}\syntaxCont{{}\terminal{-}}{}\syntaxCont{{}\terminal{++}}{}\syntaxCont{{}\terminal{+}}{}\syntaxCont{{}\terminal{()}}{}\syntaxCont{{}\terminal{[]}}{}
@@ -391,7 +396,7 @@
 \begin{syntaxBlock}{\nonTerminal{\sort{StructOpBegin}}}\syntax{{{\nonTerminal{\sort{StructFuncPrologue}}}}\mathrel{}{{\nonTerminal{\sort{StructOpName}}}}}{}
 \end{syntaxBlock}
 
-\begin{syntaxBlock}{\nonTerminal{\sort{StructOp}}}\syntax{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{Args}}}}){{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{Args}}}}){{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{TypeList}}}}){{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{TypeList}}}}){{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}(){{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}(){{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}
+\begin{syntaxBlock}{\nonTerminal{\sort{StructOp}}}\syntax{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{Args}}}}){{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{Args}}}}){{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{TypeList}}}}){{\nonTerminal{\sort{Type}}}}\mathrel{}{{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}\syntaxCont{{{\nonTerminal{\sort{StructOpBegin}}}}({{\nonTerminal{\sort{TypeList}}}}){{\nonTerminal{\sort{StructFuncEpilogue}}}}}{}
 \end{syntaxBlock}
 
 \begin{syntaxBlock}{\nonTerminal{\sort{StructFuncBegin}}}\syntax{{{\nonTerminal{\sort{StructFuncPrologue}}}}\mathrel{}{{\nonTerminal{\sort{Ident}}}}}{}
@@ -470,21 +475,6 @@
 \end{module}
 \begin{module}{\moduleName{WHACK-ELEMENT}}
 \end{module}
-\begin{module}{\moduleName{WHACK-EXPRESSION-MATCHEXPR}}
-
-\begin{syntaxBlock}{\nonTerminal{\sort{Bool}}}\syntax{{}\terminal{inExprList}({{\nonTerminal{\sort{ExprList}}}},{{\nonTerminal{\sort{Expression}}}})}{\kattribute{function}}
-\end{syntaxBlock}
-\krule{
-\reduce{{}\terminal{inExprList}({\left({{\variable[Expression]{Head}{user}}\mathpunct{\terminalNoSpace{,}}{\variable[ExprList]{Tail}{user}}}\right)},{\variable[K]{Val}{}})}{{{\variable[Expression]{Head}{}}\mathrel{=_K}{\variable[K]{Val}{}}}\vee_{\scriptstyle\it Bool}{{}\terminal{inExprList}({\variable[ExprList]{Tail}{}},{\variable[K]{Val}{}})}}}{}{}{}{}
-\krule{
-\reduce{{}\terminal{inExprList}({\dotCt{ExprList}},{\AnyVar[K]{}})}{\constant[\#Bool]{false}}}{}{}{}{}
-\krule{
-\reduce{{}\terminal{match}{\variable[Expression]{E}{user}}\{{{\left({{\variable[K]{Options}{}}\terminal{:}{\variable[K]{Result}{}}}\right)}\mathpunct{\terminalNoSpace{;}}{\AnyVar[K]{}}}\terminal{default}{}\terminal{:}{\AnyVar[K]{}}\}}{\variable[K]{Result}{}}}{{}\terminal{inExprList}({\variable[K]{Options}{}},{\variable[Expression]{E}{}})}{}{}{}
-\krule{
-\reduce{{}\terminal{match}{\variable[Expression]{E}{user}}\{{{\AnyVar[K]{}}\mathpunct{\terminalNoSpace{;}}{\variable[K]{Cases}{}}}\terminal{default}{}\terminal{:}{\variable[K]{Default}{}}\}}{{}\terminal{match}{\variable[Expression]{E}{}}\{{\variable[K]{Cases}{}}\terminal{default}{}\terminal{:}{\variable[K]{Default}{}}\}}}{}{}{\kattribute{owise}}{}
-\krule{
-\reduce{{}\terminal{match}{\variable[Expression]{E}{user}}\{{\dotCt{MatchExprCases}}\terminal{default}{}\terminal{:}{\variable[K]{Default}{}}\}}{\variable[K]{Default}{}}}{}{}{}{}
-\end{module}
 \begin{module}{\moduleName{WHACK-EXPRESSION-ADDRESSOF}}
 \end{module}
 \begin{module}{\moduleName{WHACK-EXPRESSION-TERNARY}}
@@ -496,6 +486,21 @@
 \reduce{{\constant[\#Bool]{true}}\terminal{?}{\variable[K]{E}{}}\terminal{:}{\AnyVar[K]{}}}{\variable[K]{E}{}}}{}{}{}{}
 \kcontext{
 {\constant[\#Bool]{true}}\terminal{?}{\khole{}}\terminal{:}{\AnyVar[K]{}}}{}{}{\kattribute{ndheat}}
+\end{module}
+\begin{module}{\moduleName{WHACK-FACTOR-MATCHEXPR}}
+
+\begin{syntaxBlock}{\nonTerminal{\sort{Bool}}}\syntax{{}\terminal{inExprList}({{\nonTerminal{\sort{ExprList}}}},{{\nonTerminal{\sort{Expression}}}})}{\kattribute{function}}
+\end{syntaxBlock}
+\krule{
+\reduce{{}\terminal{inExprList}({\left({{\variable[K]{Head}{}}\mathpunct{\terminalNoSpace{,}}{\variable[ExprList]{Tail}{user}}}\right)},{\variable[K]{Val}{}})}{{{\variable[K]{Head}{}}\mathrel{=_K}{\variable[K]{Val}{}}}\vee_{\scriptstyle\it Bool}{{}\terminal{inExprList}({\variable[ExprList]{Tail}{}},{\variable[K]{Val}{}})}}}{}{}{}{}
+\krule{
+\reduce{{}\terminal{inExprList}({\dotCt{ExprList}},{\AnyVar[K]{}})}{\constant[\#Bool]{false}}}{}{}{}{}
+\krule{
+\reduce{{}\terminal{match}{\variable[Expression]{E}{user}}\{{{\left({{\variable[K]{Options}{}}\terminal{:}{\variable[K]{Result}{}}}\right)}\mathpunct{\terminalNoSpace{;}}{\AnyVar[K]{}}}\terminal{default}{}\terminal{:}{\AnyVar[K]{}}\}}{\variable[K]{Result}{}}}{{}\terminal{inExprList}({\variable[K]{Options}{}},{\variable[Expression]{E}{}})}{}{}{}
+\krule{
+\reduce{{}\terminal{match}{\variable[Expression]{E}{user}}\{{{\AnyVar[K]{}}\mathpunct{\terminalNoSpace{;}}{\variable[K]{Cases}{}}}\terminal{default}{}\terminal{:}{\variable[K]{Default}{}}\}}{{}\terminal{match}{\variable[Expression]{E}{}}\{{\variable[K]{Cases}{}}\terminal{default}{}\terminal{:}{\variable[K]{Default}{}}\}}}{}{}{\kattribute{owise}}{}
+\krule{
+\reduce{{}\terminal{match}{\variable[Expression]{E}{user}}\{{\dotCt{MatchExprCases}}\terminal{default}{}\terminal{:}{\variable[K]{Default}{}}\}}{\variable[K]{Default}{}}}{}{}{}{}
 \end{module}
 \begin{module}{\moduleName{WHACK-FACTOR-STRING}}
 
@@ -528,16 +533,12 @@
 
 \begin{syntaxBlock}{\nonTerminal{\sort{KResult}}}\syntax{{\nonTerminal{\sort{Int}}}}{}
 \end{syntaxBlock}
-\begin{kblock}[text]
- Unary Operations for Integers\end{kblock}
 \krule{
 \reduce{{}\terminal{+}{\variable[Int]{I}{user}}}{{\constant[\#Int]{0}}\mathrel{+_{\scriptstyle\it Int}}{\variable[Int]{I}{}}}}{}{}{}{}
 \krule{
 \reduce{{}\terminal{-}{\variable[Int]{I}{user}}}{{\constant[\#Int]{0}}\mathrel{-_{\scriptstyle\it Int}}{\variable[Int]{I}{}}}}{}{}{}{}
 \krule{
 \reduce{{}\terminal{\mbox{\~{}}}{\variable[Int]{I}{user}}}{\mathop{\sim_{\scriptstyle\it Int}}{\variable[Int]{I}{}}}}{}{}{}{}
-\begin{kblock}[text]
- Binary Operations for Integers\end{kblock}
 \krule{
 \reduce{{\variable[Int]{I1}{user}}\terminal{*}{\variable[Int]{I2}{user}}}{{\variable[Int]{I1}{}}\mathrel{\ast_{\scriptstyle\it Int}}{\variable[Int]{I2}{}}}}{}{}{}{}
 \krule{
@@ -558,8 +559,6 @@
 \reduce{{\variable[Int]{I1}{user}}\terminal{<<}{\variable[Int]{I2}{user}}}{{\variable[Int]{I1}{}}\mathrel{\ll_{\scriptstyle\it Int}}{\variable[Int]{I2}{}}}}{}{}{}{}
 \krule{
 \reduce{{\variable[Int]{I1}{user}}\terminal{>>}{\variable[Int]{I2}{user}}}{{\variable[Int]{I1}{}}\mathrel{\gg_{\scriptstyle\it Int}}{\variable[Int]{I2}{}}}}{}{}{}{}
-\begin{kblock}[text]
- Comparisons for Integers\end{kblock}
 \krule{
 \reduce{{\variable[Int]{I1}{user}}\terminal{<=}{\variable[Int]{I2}{user}}}{{\variable[Int]{I1}{}}\mathrel{\leq_{\scriptstyle\it Int}}{\variable[Int]{I2}{}}}}{}{}{}{}
 \krule{
@@ -577,14 +576,10 @@
 
 \begin{syntaxBlock}{\nonTerminal{\sort{KResult}}}\syntax{{\nonTerminal{\sort{Float}}}}{}
 \end{syntaxBlock}
-\begin{kblock}[text]
- Unary Operations for Floating Point Numbers\end{kblock}
 \krule{
 \reduce{{}\terminal{+}{\variable[Float]{F}{user}}}{{\constant[\#Float]{0.0}}\mathrel{+_{\scriptstyle\it Float}}{\variable[Float]{F}{}}}}{}{}{}{}
 \krule{
 \reduce{{}\terminal{-}{\variable[Float]{F}{user}}}{{\constant[\#Float]{0.0}}\mathrel{-_{\scriptstyle\it Float}}{\variable[Float]{F}{}}}}{}{}{}{}
-\begin{kblock}[text]
- Binary Operations for Floating Point Numbers\end{kblock}
 \krule{
 \reduce{{\variable[Float]{F1}{user}}\terminal{*}{\variable[Float]{F2}{user}}}{{\variable[Float]{F1}{}}\mathrel{\ast_{\scriptstyle\it Float}}{\variable[Float]{F2}{}}}}{}{}{}{}
 \krule{
@@ -597,8 +592,6 @@
 \reduce{{\variable[Float]{F1}{user}}\terminal{-}{\variable[Float]{F2}{user}}}{{\variable[Float]{F1}{}}\mathrel{-_{\scriptstyle\it Float}}{\variable[Float]{F2}{}}}}{}{}{}{}
 \krule{
 \reduce{{\variable[Float]{F1}{user}}\terminal{\mbox{\^{}}}{\variable[Float]{F2}{user}}}{{\variable[Float]{F2}{}}^{\variable[Float]{F2}{}}}}{}{}{}{}
-\begin{kblock}[text]
- Comparisons for Floating Point Numbers\end{kblock}
 \krule{
 \reduce{{\variable[Float]{F1}{user}}\terminal{<=}{\variable[Float]{F2}{user}}}{{\variable[Float]{F1}{}}\mathrel{\leq_{\scriptstyle\it Float}}{\variable[Float]{F2}{}}}}{}{}{}{}
 \krule{
@@ -768,12 +761,12 @@
 \end{module}
 \begin{module}{\moduleName{WHACK-STMT-ASSIGN}}
 \krule{
-\kmiddle{k}{{\reduce{{\variable[Variable]{V}{user}}\mathpunct{\terminalNoSpace{,}}{\variable[VariableList]{Vs}{user}}}{\variable[VariableList]{Vs}{}}}\terminal{=}{\reduce{{\variable[Expression]{E}{user}}\mathpunct{\terminalNoSpace{,}}{\variable[ExprList]{Es}{user}}}{\variable[ExprList]{Es}{}}}}
-\mathrel{}\kmiddle{stack}{\variable[Variable]{V}{}\mapsto\variable[K]{Loc}{}}
+\kmiddle{k}{{\reduce{{\variable[Factor]{F}{user}}\mathpunct{\terminalNoSpace{,}}{\variable[FactorList]{Fs}{user}}}{\variable[FactorList]{Fs}{}}}\terminal{=}{\reduce{{\variable[Expression]{E}{user}}\mathpunct{\terminalNoSpace{,}}{\variable[ExprList]{Es}{user}}}{\variable[ExprList]{Es}{}}}}
+\mathrel{}\kmiddle{stack}{\variable[Factor]{F}{}\mapsto\variable[K]{Loc}{}}
 \mathrel{}\kmiddle{state}{\variable[K]{Loc}{}\mapsto\reduce{\AnyVar[K]{}}{\variable[Expression]{E}{}}}
 }{}{}{}{}
 \krule{
-\reduce{{\dotCt{VariableList}}\terminal{=}{\dotCt{ExprList}}}{\dotCt{K}}}{}{}{\kattribute{structural}}{}
+\reduce{{\dotCt{FactorList}}\terminal{=}{\dotCt{ExprList}}}{\dotCt{K}}}{}{}{\kattribute{structural}}{}
 \end{module}
 \begin{module}{\moduleName{WHACK-STMT}}
 \krule{

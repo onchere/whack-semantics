@@ -29,6 +29,6 @@ rule <k>...
 		Loc |-> (_ => E)
 	...</state>
 
-rule .VariableList = .ExprList => . [structural]
+rule .FactorList = .ExprList => . [structural]
 
 endmodule

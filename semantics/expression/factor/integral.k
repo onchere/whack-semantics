@@ -21,15 +21,11 @@ imports WHACK-SYNTAX
 
 syntax KResult ::= Int
 
-//@ Unary Operations for Integers
-
 rule +I:Int => 0 +Int I
 
 rule -I:Int => 0 -Int I
 
 rule ~I:Int => ~Int I
-
-//@ Binary Operations for Integers
 
 rule I1:Int * I2:Int => I1 *Int I2
 
@@ -50,8 +46,6 @@ rule I1:Int | I2:Int => I1 |Int I2
 rule I1:Int << I2:Int => I1 <<Int I2
 
 rule I1:Int >> I2:Int => I1 >>Int I2
-
-//@ Comparisons for Integers
 
 rule I1:Int <= I2:Int => I1 <=Int I2
 

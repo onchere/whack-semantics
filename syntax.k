@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 module WHACK-SYNTAX
-
   syntax Character ::= Char
 
   syntax Integral ::= Int
+
+  syntax Binary ::= Token{"[0b][0-1]+"}
+
+  syntax Octal ::= Token{"[0o][0-7]+"}
+
+  syntax Hexadecimal ::= Token{"[0x][0-9a-fA-F]+"}
 
   syntax FloatingPt ::= Float
 
@@ -31,7 +35,7 @@ module WHACK-SYNTAX
   syntax ScopeRes ::= NeList{Ident, "::"}
 
   syntax SimpleSymbolName ::= ScopeRes
-                            | Ident
+                            | Ident     [prefer]
 
   syntax OverloadID ::= SimpleSymbolName "::" StructOpName
 
@@ -61,8 +65,7 @@ module WHACK-SYNTAX
                         | PointerType
                         | BasicType
 
-  syntax Type ::= "mut" ConcreteType "&"
-                | "mut" ConcreteType
+  syntax Type ::= ConcreteType "&"
                 | ConcreteType
 
   syntax VariadicType ::= Type Expansion
@@ -77,12 +80,13 @@ module WHACK-SYNTAX
 
   syntax ExpandOp ::= Variable Expansion
 
-  syntax SizeOf ::= "sizeof" Expression
-                  | "sizeof" Type
+  syntax SizeOf ::= "sizeof" "(" Type ")"
 
-  syntax AlignOf ::= "alignof" Type
+  syntax AlignOf ::= "alignof" "(" Type ")"
 
-  syntax Cast ::= "cast" Expression "as" Type
+  syntax OffsetOf ::= "offsetof" "(" Type "," Ident ")"
+
+  syntax Cast ::= "cast" "<" Type ">" "(" Expression ")"
 
   syntax Reference ::= Variable "&"
 
@@ -99,24 +103,17 @@ module WHACK-SYNTAX
 
   syntax MemberInitListMember ::= Ident ":" Expression
 
-  syntax MemberInitListMemberList ::= NeList{MemberInitListMember, ","}
+  syntax MemberInitList ::= NeList{MemberInitListMember, ","}
 
-  syntax MemberInitList ::= "{" MemberInitListMemberList "}"
-
-  syntax Initializer ::= MemberInitList
+  syntax Initializer ::= "{" MemberInitList "}"
                        | InitList
 
   syntax Value ::= Type Initializer
 
   syntax NewExpr ::= "new" "(" Expression ")" Type Initializer
-                 | "new" "(" Expression ")" Type
-                 | "new" Type Initializer
-                 | "new" Type
-
-  syntax Callable ::= Closure
-                  | OverloadID
-                  | ScopeRes
-                  | Variable
+                   | "new" "(" Expression ")" Type
+                   | "new" Type Initializer
+                   | "new" Type
 
   syntax Future ::= "await" /*Launch in a coroutine, return a coroutine handle?*/
                   | "async" /*Launch asynchronously in another thread, return joinable?*/
@@ -125,7 +122,7 @@ module WHACK-SYNTAX
 
   syntax FuncArgsList ::= NeList{FuncArgs, ""}
 
-  syntax Callables ::= NeList{Callable, "->"}
+  syntax Callables ::= NeList{Factor, "->"}
 
   syntax FuncCall ::= Future Callables FuncArgsList
                     | Callables FuncArgsList
@@ -164,7 +161,8 @@ module WHACK-SYNTAX
                   | MatchExpr
                   | Closure
                   | Reference
-                  | Initializer
+                  | MemberInitList
+                  | InitList
                   | NewExpr
                   | Value
                   | PreOp
@@ -177,6 +175,8 @@ module WHACK-SYNTAX
                   | Character
                   | FloatingPt
                   | Integral
+                  | Binary
+                  | Hexadecimal
                   | Boolean
                   | String
                   | Element
@@ -296,6 +296,7 @@ module WHACK-SYNTAX
   syntax StmtsList ::= NeList{Stmt, ";"}
 
   syntax ForInIncrExpr ::= "for" StmtsList LogicalOr ";" StmtsList
+                         | "for" Stmt ";" LogicalOr ";" StmtsList   [prefer]
                          | "for" ";" LogicalOr ";" StmtsList
 
   syntax ForExpr ::= ForInExpr
@@ -303,27 +304,21 @@ module WHACK-SYNTAX
 
   syntax For ::= ForExpr Stmt
 
-  syntax StructMember ::= Variable "." Ident
+  syntax StructMember ::= Factor "." SimpleSymbolName
 
-  syntax Element ::= Variable "[" Expression "]"
+  syntax Element ::= Factor "[" Expression "]"
 
-  syntax Variable ::= Element
-                    | StructMember
-                    | Ident
+  syntax PostOp ::= Factor "--"
+                  | Factor "++"
 
-  syntax PostOp ::= Variable "--"
-                  | Variable "++"
-
-  syntax PreOp ::= "--" Variable
-                 | "++" Variable
+  syntax PreOp ::= "--" Factor
+                 | "++" Factor
 
   syntax Return ::= "return" ExprList
-                  | "return"
 
   syntax Delete ::= "delete" ExprList
 
   syntax Yield ::= "yield" ExprList
-                 | "yield"
 
   syntax Break ::= "break"
 
@@ -378,8 +373,7 @@ module WHACK-SYNTAX
   syntax Tags ::= "@" Tag
                 | "@" "(" TagList ")"
 
-  syntax ClassDefMember ::= Ident "(" TypeList ")"
-                          | Ident "(" ")"
+  syntax ClassDefMember ::= Ident "(" ListOfTypes ")"
 
   syntax ClassDefMemberList ::= NeList{ClassDefMember, ""}
 
@@ -465,9 +459,7 @@ module WHACK-SYNTAX
                     | StructOpBegin "(" TypeList ")" Type StructFuncEpilogue
                     | StructOpBegin "(" TypeList ")" StructFuncEpilogue
 
-  syntax StructFuncBegin ::= StructFuncPrologue Ident
-
-  syntax StructFunc ::= StructFuncBegin "(" Args ")" ListOfTypes StructFuncEpilogue
+  syntax StructFunc ::= StructFuncPrologue Ident "(" Args ")" ListOfTypes StructFuncEpilogue
 
   syntax InterfaceMember ::= FnType StructMemberName
 
@@ -484,9 +476,11 @@ module WHACK-SYNTAX
 
   syntax Interface ::= Ident InterfaceDef
 
-  syntax ExternFunc ::= "extern" "func" Ident "(" TypeList ")" ListOfTypes
+  syntax ExternFunc ::= "extern" FnType Ident ";"
+                      | "extern" FnType Ident
 
-  syntax Exports ::= "export" IdentList
+  syntax Exports ::= "export" IdentList ";"
+                   | "export" IdentList
 
   syntax ModuleUse ::= "use" SimpleSymbolName "!" "{" IdentList "}" "as" Ident
                      | "use" SimpleSymbolName "!" "{" IdentList "}"
@@ -495,12 +489,14 @@ module WHACK-SYNTAX
                      | "use" SimpleSymbolName "as" Ident
                      | "use" SimpleSymbolName
 
-  syntax ModuleUses ::= ModuleUse
+  syntax ModuleUses ::= ModuleUse ";"
+                      | ModuleUse
                       | Comment
 
   syntax ModuleUsesList ::= List{ModuleUses, ""}
 
-  syntax ModuleDecl ::= "module" Ident
+  syntax ModuleDecl ::= "module" Ident ";"
+                      | "module" Ident
 
   syntax CompilerOpt ::= "{-" "OPTIONS" IdentList "-}"
 
